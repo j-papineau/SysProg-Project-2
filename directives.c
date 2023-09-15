@@ -34,5 +34,11 @@ int isDirective(char* string)
 
 bool isStartDirective(int directiveType)
 {
+	if (directiveType == START)
+	{
+		return true;
+	}else{
+		return false;
+	}
 	
 }

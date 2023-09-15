@@ -36,7 +36,7 @@ void displayError(int errorType, char* errorInfo)
             errorText = "Missing Command Line Arguments";
             break;
         case OUT_OF_MEMORY:
-            errorText = "Out of Memory";
+            errorText = "Address Exceeds Maximum Memory";
             break;
         case OUT_OF_RANGE_BYTE:
             errorText = "Out of Range Byte";

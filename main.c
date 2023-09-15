@@ -8,6 +8,7 @@
 
 void performPass1(symbol* symbolTable[], char* filename, address* addresses);
 void printSummary(address* addresses);
+bool hasSymbol(segment* input);
 bool validateLine(segment* input);
 struct segment* prepareSegments(char* line);
 void trim(char string[]);
@@ -75,6 +76,7 @@ void performPass1(symbol* symbolTable[], char* filename, address* addresses)
 			3. if label exists, add to symbol table
 			4. summarize
 		
+			max memory address 0x100000
 		*/
 		
 
@@ -82,30 +84,45 @@ void performPass1(symbol* symbolTable[], char* filename, address* addresses)
 		printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
 		while(fgets(readBuffer, INPUT_BUF_SIZE, fptr)) {
+
+			//check PC address for memory exceeding value (0x100000)
+			if((addresses[2].current += 3) > 0x100000){
+				displayError(OUT_OF_MEMORY, "");
+				exit;
+			}
 			
-			//line by line
-			//ignore comments
+			//check for blank records
+			if (readBuffer[0] < 32)
+			{
+				displayError(BLANK_RECORD, "");
+			}
+			
 			segment* tempSeg = prepareSegments(readBuffer);
 			
-
+			//validate line checks for illegal symbols, if true, no violations found
 			if(validateLine(tempSeg)){
-				//continue doing stuff
+				
 				//start directive for start address
-				if (isDirective(tempSeg->operation) == 6)
+				if (isStartDirective(isDirective(tempSeg->operation)))
 				{
 					//store start address in index 0 of addresses array
 					//convert hex value in code for easy incrementing
 					sscanf(tempSeg->operand, "%x", &addresses[0].start);
 					// addresses[0].start = atoi(tempSeg->operand);
 					//also set address 2 for tracking purposes
-					printf("START ADDRESS FOUND: %x\n", addresses[0].start);
-				
 					addresses[2].start = addresses[0].start;
 
-					
-					
+				}else{
+					//increment memory
+
 				}
+				
 				//check if line has symbol, if so do stuff
+				if(tempSeg->label[0] > 65){
+					printf("Label Found: %s\n", tempSeg->label);
+
+
+				}
 
 				//else, track address and increment accordingly
 				
@@ -120,6 +137,8 @@ void performPass1(symbol* symbolTable[], char* filename, address* addresses)
 		printSummary(addresses);
 	}
 }
+
+
 
 void printSummary(address* addresses){
 
@@ -145,6 +164,7 @@ bool validateLine(segment* input){
 	//check for label on line, if there is one, validate it
 		if(isDirective(input->label) != 0 || isOpcode(input->label)){
 			displayError(ILLEGAL_SYMBOL, input->label);
+			exit;
 			return false;
 		}
 
@@ -160,6 +180,7 @@ bool validateLine(segment* input){
 		}
 		if(!validOperation){
 			displayError(ILLEGAL_OPCODE_DIRECTIVE, input->operation);
+			exit;
 			return false;
 		}
 
