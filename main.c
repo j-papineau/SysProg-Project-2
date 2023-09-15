@@ -154,6 +154,8 @@ void printSummary(address* addresses){
 
 }
 
+
+//refactor to not need this func
 bool validateLine(segment* input){
 
 	//check first for commented lines, return false but no error
