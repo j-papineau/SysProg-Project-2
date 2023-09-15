@@ -1,0 +1,50 @@
+#
+# Example SIC Assembler Program.
+#
+#
+----	COPY    START   1000 
+1000	FIRST   STL     RETADR 
+1003	        LDB     #LENGTH 
+----			BASE    LENGTH 
+1006	CLOOP   +JSUB   RDREC 
+100A	        LDA     LENGTH 
+100D	        COMP    #0 
+1010	        JEQ     ENDFIL 
+1013	        +JSUB   WRREC 
+1017	        J       CLOOP 
+101A	ENDFIL  LDA     EOF 
+101D	        STA     BUFFER 
+1020	        LDA     #3 
+1023	        STA     LENGTH 
+1026	        +JSUB   WRREC 
+102A	        J       @RETADR 
+102D	EOF     BYTE    C'EOF' 
+1030	RETADR  RESW    1 
+1033	LENGTH  RESW    1 
+1036	BUFFER  RESB    4096 
+2036	RDREC   CLEAR   X 
+2038	        CLEAR   A 
+203A	        CLEAR   S 
+203C	        +LDT    #4096 
+2040	RLOOP   TD      INPUT 
+2043	        JEQ     RLOOP 
+2046	        RD      INPUT 
+2049	        COMPR   A,S 
+204B	        JEQ     EXIT 
+204E	        STCH    BUFFER,X 
+2051	        TIXR    T 
+2053	        JLT     RLOOP 
+2056	EXIT    STX     LENGTH 
+2059	        RSUB 
+205C	INPUT   BYTE    X'F1' 
+205D	WRREC   CLEAR   X 
+205F	        LDT     LENGTH 
+2062	WLOOP   TD      OUTPUT 
+2065	        JEQ     WLOOP 
+2068	        LDCH    BUFFER,X 
+206B	        WD      OUTPUT 
+206E	        TIXR    T 
+2070	        JLT     WLOOP 
+2073	        RSUB 
+2076	OUTPUT  BYTE    X'05' 
+2077	        END     FIRST 
