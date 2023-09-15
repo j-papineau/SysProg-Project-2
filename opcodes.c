@@ -65,8 +65,8 @@ bool isFormat4Instruction(char* opcode)
 bool isOpcode(char* string)
 {
 	//see if string is an opcode name
+	
 	//trim + on XE instructions
-
 	if (string[0] == '+') { string = string + 1; }
 		
 	if(searchOpcodes(string) == -1){

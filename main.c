@@ -32,7 +32,6 @@ int main(int argc, char* argv[])
 	address addresses = { 0x00, 0x00, 0x00 };
 
 	
-	
 
 
 	// Create the symbol table for storing the symbol data
@@ -100,6 +99,11 @@ void performPass1(symbol* symbolTable[], char* filename, address* addresses)
 					// addresses[0].start = atoi(tempSeg->operand);
 					//also set address 2 for tracking purposes
 					printf("START ADDRESS FOUND: %x\n", addresses[0].start);
+				
+					addresses[2].start = addresses[0].start;
+
+					
+					
 				}
 				//check if line has symbol, if so do stuff
 
@@ -125,7 +129,9 @@ void printSummary(address* addresses){
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	printf("Starting Address: 0x%x\n", addresses[0].start);
 	printf("Ending Address: 0x%x\n", addresses[1].start);
-	printf("Program Size (bytes): %d \n", size);
+	printf("Program Size (bytes): %d \n", (addresses[1].start - addresses[0].start));
+
+	
 
 }
 
